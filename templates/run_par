@@ -1,0 +1,27 @@
+# FabTsp Exec Template: 
+cd $job_results
+
+export MPLCONFIGDIR="$(pwd)/configs/"
+
+$run_prefix
+
+OUTPUT_DIR="output_files"
+INPUT_DIR="input_files"
+
+if [ -z "$tsp_location" ]
+then
+	echo "Please set $$tsp_location in your deploy/machines_user.yml file."
+else
+	export PYTHONPATH=$tsp_location:$$PYTHONPATH
+fi
+
+/usr/bin/env > env.log
+echo "Starting tsp job with mpi implementation"
+
+start_time="$$(date -u +%s.%N)"
+
+$run_command python3 run_par.py $INPUT_DIR $OUTPUT_DIR
+
+end_time="$$(date -u +%s.%N)"
+elapsed="$$(bc <<<"$$end_time-$$start_time")"
+echo "Total Executing Time = $$elapsed seconds"

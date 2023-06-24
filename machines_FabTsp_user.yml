@@ -1,0 +1,5 @@
+# All variables here will overwrite setting in FabSim3/fabsim/deploy/machines.yml and FabSim3/fabsim/deploy/machines_user.yml
+
+default:
+  # Default number of cores per job.
+  cores: 1

@@ -17,12 +17,12 @@ add_local_paths("FabTsp")
 
 @task
 @load_plugin_env_vars("FabTsp")
-def FabTsp(config='tsp', label='', **args):
+def stsp(config='stsp', label='', **args):
     '''
-    Submit a single job of tsp
+    Submit a single job of tsp (non-MPI)
 
-    fabsim <remote_machine> FabTsp:tsp
-    fabsim localhost FabTsp:tsp
+    fabsim <remote_machine> stsp:stsp
+    fabsim localhost stsp:stsp
     '''
     if len(label) > 0:
         env.job_name_template += "_{}".format(label)
@@ -30,17 +30,35 @@ def FabTsp(config='tsp', label='', **args):
     update_environment(args)
     with_config(config)
     execute(put_configs, config)
-    job(dict(script='run_par'), args)
+    job(dict(script='stsp'), args)
 
 
 @task
 @load_plugin_env_vars("FabTsp")
-def FabTsp_ensemble(config='tsp', label='', **args):
+def ptsp(config='ptsp', label='', **args):
     '''
-    Submit an ensemble of tsp jobs
+    Submit a single job of tsp (MPI)
 
-    fabsim <remote_machine> FabTsp_ensemble:tps
-    fabsim localhost FabTsp_ensemble:tsp
+    fabsim <remote_machine> ptsp:tsp
+    fabsim localhost ptsp:tsp
+    '''
+    if len(label) > 0:
+        env.job_name_template += "_{}".format(label)
+
+    update_environment(args)
+    with_config(config)
+    execute(put_configs, config)
+    job(dict(script='ptsp'), args)
+
+
+@task
+@load_plugin_env_vars("FabTsp")
+def ptsp_ensemble(config='tsp', label='', **args):
+    '''
+    Submit an ensemble of tsp jobs (MPI)
+
+    fabsim <remote_machine> FabTsp_ensemble:ptps
+    fabsim localhost FabTsp_ensemble:ptsp
     '''
 
     if len(label) > 0:
@@ -50,7 +68,7 @@ def FabTsp_ensemble(config='tsp', label='', **args):
     path_to_config = find_config_file_path(config)
     print("local config file path at: %s" % path_to_config)
     sweep_dir = path_to_config + "/SWEEP"
-    env.script = 'run_par'
+    env.script = 'ptsp'
     env.input_name_in_config = 'tsp'
     with_config(config)
     run_ensemble(config, sweep_dir, **args)
